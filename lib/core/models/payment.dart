@@ -14,22 +14,19 @@ class Payment {
       @required this.amount,
       @required this.date});
 
-  Payment.fromMap(Map<String, dynamic> map) {
-    paymentID = map['paymentID'];
+  Payment.fromMap(Map<String, dynamic> map, String uid) {
+    paymentID = uid;
     clientID = map['clientID'];
     client = map['client'];
     amount = map['amount'];
     date = map['date'];
   }
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map;
-    map['paymentID'] = paymentID;
-    map['clientID'] = clientID;
-    map['client'] = client;
-    map['amount'] = amount;
-    map['date'] = date;
-
-    return map;
-  }
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'paymentID': paymentID,
+        'clientID': clientID,
+        'client': client,
+        'amount': amount,
+        'date': date
+      };
 }

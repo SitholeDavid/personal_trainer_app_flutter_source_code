@@ -14,12 +14,20 @@ class Trainer {
       this.bankingDetails = '',
       this.phoneNumber = ''});
 
-  Trainer.fromMap(Map<String, dynamic> map) {
+  Trainer.fromMap(Map<String, dynamic> map, String uid) {
+    id = uid;
     email = map['email'];
     name = map['name'];
     bankingDetails = map['bankingDetails'];
     phoneNumber = map['phoneNumber'];
   }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'email': email,
+        'name': name,
+        'bankingDetails': bankingDetails ?? '',
+        'phoneNumber': phoneNumber ?? ''
+      };
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map;

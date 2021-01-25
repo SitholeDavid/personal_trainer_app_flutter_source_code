@@ -6,6 +6,7 @@ import 'package:personal_trainer_app/ui/constants/colors.dart';
 import 'package:personal_trainer_app/ui/constants/margins.dart';
 import 'package:personal_trainer_app/ui/constants/text_sizes.dart';
 import 'package:personal_trainer_app/ui/constants/ui_helpers.dart';
+import 'package:personal_trainer_app/ui/shared/custom_text_button.dart';
 import 'package:stacked/stacked.dart';
 
 class SignUpView extends StatelessWidget {
@@ -151,40 +152,18 @@ class SignUpView extends StatelessWidget {
                                 gapPadding: 0)),
                       ),
                       Expanded(child: Text('')),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () async {
-                                if (_formKey.currentState.validate()) {
-                                  await model.signUp(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                      _nameController.text);
-                                }
-                              },
-                              child: Text(
-                                'Create account',
-                                style: mediumTextFont.copyWith(
-                                    color: Colors.white),
-                              ),
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                          (states) => primaryColorDark),
-                                  padding: MaterialStateProperty.resolveWith(
-                                      (states) => EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 10)),
-                                  shape: MaterialStateProperty.resolveWith(
-                                      (states) => RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          side: BorderSide(
-                                              color: primaryColorDark)))),
-                            ),
-                          )
-                        ],
-                      )
+                      customTextButton(
+                          buttonText: 'Create account',
+                          onTapCallback: () async {
+                            // await model.signUp('sitholedavid003@gmail.com',
+                            //     'sithole7', 'David Sithole');
+                            if (_formKey.currentState.validate()) {
+                              await model.signUp(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _nameController.text);
+                            }
+                          }),
                     ],
                   ),
                 ),

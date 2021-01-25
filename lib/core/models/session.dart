@@ -2,24 +2,20 @@ import 'package:flutter/cupertino.dart';
 
 class Session {
   String sessionID;
-  int epoch;
+  String startTime;
   String client;
 
   Session(
-      {@required this.sessionID, @required this.epoch, @required this.client});
+      {@required this.sessionID,
+      @required this.startTime,
+      @required this.client});
 
-  Session.fromMap(Map<String, dynamic> map) {
-    sessionID = map['sessionID'];
-    epoch = map['epoch'];
+  Session.fromMap(Map<String, dynamic> map, String uid) {
+    sessionID = uid;
+    startTime = map['startTime'];
     client = map['client'];
   }
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map;
-    map['sessionID'] = sessionID;
-    map['epoch'] = epoch;
-    map['client'] = client;
-
-    return map;
-  }
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{'startTime': startTime, 'client': client};
 }

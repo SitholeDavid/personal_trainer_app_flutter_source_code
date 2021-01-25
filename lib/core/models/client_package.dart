@@ -12,18 +12,24 @@ class ClientPackage {
       this.expiryDate,
       this.sessionsLeft});
 
-  ClientPackage.fromMap(Map<String, dynamic> map) {
-    clientPackageID = map['clientPackageID'];
+  ClientPackage.fromMap(Map<String, dynamic> map, String uid) {
+    clientPackageID = uid;
     packageID = map['packageID'];
     datePurchased = map['datePurchased'];
     expiryDate = map['expiryDate'];
     sessionsLeft = map['sessionsLeft'];
   }
 
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'packageID': packageID,
+        'datePurchased': datePurchased ?? 0,
+        'expiryDate': expiryDate ?? 0,
+        'sessionsLeft': sessionsLeft ?? 0
+      };
+
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map;
 
-    map['clientPackageID'] = clientPackageID;
     map['packageID'] = packageID;
     map['datePurchased'] = map['datePurchased'];
     map['expiryDate'] = map['expiryDate'];

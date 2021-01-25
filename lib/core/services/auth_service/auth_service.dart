@@ -53,8 +53,8 @@ class AuthService extends AuthServiceInterface {
       if (authResult == null) throw Error();
 
       var trainer = Trainer(id: authResult.user.uid, email: email, name: name);
-      await _firestore.createTrainer(trainer);
-      return true;
+      var result = await _firestore.createTrainer(trainer);
+      return result;
     } catch (e) {
       return false;
     }
@@ -64,5 +64,16 @@ class AuthService extends AuthServiceInterface {
   Future<bool> isUserLoggedIn() async {
     var user = await getCurrentUser();
     return user != null;
+  }
+
+  @override
+  Future<String> signUpClientWithEmail(String email, String password) async {
+    try {
+      var authResult = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      return authResult.user.uid;
+    } catch (e) {
+      return null;
+    }
   }
 }

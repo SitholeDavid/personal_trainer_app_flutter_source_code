@@ -16,7 +16,8 @@ class SignUpViewModel extends BaseViewModel {
       _snackbarService.showSnackbar(
           message: 'Sign up successful', duration: Duration(seconds: 2));
 
-      _navigationService.navigateTo(DashboardViewRoute);
+      Future.delayed(Duration(seconds: 2),
+          () => _navigationService.navigateTo(DashboardViewRoute));
     } else {
       _snackbarService.showSnackbar(
           message: 'Sign up failed. Please check your details and try again',

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:personal_trainer_app/locator.dart';
 import 'package:personal_trainer_app/ui/router.dart';
 import 'package:personal_trainer_app/ui/shared/setup_dialog_ui.dart';
-import 'package:personal_trainer_app/ui/views/select_working_days_view.dart';
-import 'package:personal_trainer_app/ui/views/sign_up_view.dart';
 import 'package:personal_trainer_app/ui/views/startup_view.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   setupDialogUi();
   runApp(MyApp());
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
       ),
       navigatorKey: locator<NavigationService>().navigatorKey,
       onGenerateRoute: generateRoute,
-      home: SelectWorkingDaysView(),
+      home: StartupView(),
     );
   }
 }

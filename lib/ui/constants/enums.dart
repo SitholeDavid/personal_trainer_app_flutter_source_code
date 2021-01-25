@@ -1,1 +1,7 @@
-enum DialogType { timePicker }
+enum DialogType {
+  timePicker,
+  editInputField,
+  choosePeriod,
+  updateBooking,
+  drawer
+}

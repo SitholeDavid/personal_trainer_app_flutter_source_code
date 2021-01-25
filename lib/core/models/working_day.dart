@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
-
 class WorkingDay {
   String title;
   DateTime startTime = DateTime(2020, 0, 0, 5, 30);
   DateTime endTime = DateTime(2020, 0, 0, 17, 0);
   DateTime duration = DateTime(2020, 0, 0, 0, 45);
+  bool working;
   int key;
 
   WorkingDay(
-      {this.title, this.startTime, this.endTime, this.duration, this.key}) {
+      {this.title,
+      this.startTime,
+      this.endTime,
+      this.duration,
+      this.key,
+      this.working}) {
     startTime = startTime ?? DateTime(2020, 0, 0, 5, 30);
     endTime = endTime ?? DateTime(2020, 0, 0, 17, 0);
     duration = duration ?? DateTime(2020, 0, 0, 0, 45);
@@ -16,10 +20,24 @@ class WorkingDay {
 
   WorkingDay.fromMap(Map<String, dynamic> map) {
     title = map['title'];
-    startTime = map['startTime'];
-    endTime = map['endTime'];
-    duration = map['duration'];
-    key = map['key'];
+    startTime = DateTime.parse(map['startTime']);
+    endTime = DateTime.parse(map['endTime']);
+    duration = DateTime.parse(map['duration']);
+    working = map['working'];
+  }
+
+  WorkingDay.fromString(String workingDay) {
+    var props = workingDay.split(',');
+    title = props[0];
+    startTime = DateTime.tryParse(props[1]);
+    endTime = DateTime.tryParse(props[2]);
+    duration = DateTime.tryParse(props[3]);
+    working = props[4] as bool;
+  }
+
+  @override
+  String toString() {
+    return '$title,${startTime.toString()},${endTime.toString()},${duration.toString()},${working.toString()}';
   }
 
   Map<String, dynamic> toMap() {
@@ -29,8 +47,7 @@ class WorkingDay {
     map['startTime'] = startTime.toString();
     map['endTime'] = endTime.toString();
     map['duration'] = duration.toString();
-    map['key'] = key;
-
+    map['working'] = working;
     return map;
   }
 }

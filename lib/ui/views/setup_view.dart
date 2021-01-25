@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'dart:core';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:personal_trainer_app/core/viewmodels/setup_viewmodel.dart';
 import 'package:personal_trainer_app/ui/constants/colors.dart';
 import 'package:personal_trainer_app/ui/constants/margins.dart';
@@ -18,60 +18,91 @@ class SetupView extends StatelessWidget {
     return ViewModelBuilder<SetupViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         backgroundColor: backgroundColor,
-        body: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: pageHorizontalMargin, vertical: pageVerticalMargin),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              largeSpace,
-              Text(
-                'Select working hours for',
-                style: largeTextFont,
-              ),
-              Text(
-                model.currentDay.title,
-                style: largeTextFont.copyWith(color: primaryColorDark),
-              ),
-              mediumSpace,
-              Text(
-                'Select the start time, end time and duration of each session on ${model.currentDay.title}',
-                style: mediumTextFont,
-              ),
-              largeSpace,
-              Text(
-                'Start time',
-                style: smallTextFont,
-              ),
-              smallSpace,
-              displayTime(model.showStartTimeDialog,
-                  '${model.currentDay.startTime.hour.toString().padLeft(2, '0')} : ${model.currentDay.startTime.minute.toString().padLeft(2, '0')}'),
-              mediumSpace,
-              Text('End time', style: smallTextFont),
-              smallSpace,
-              displayTime(model.showEndTimeDialog,
-                  '${model.currentDay.endTime.hour.toString().padLeft(2, '0')} : ${model.currentDay.endTime.minute.toString().padLeft(2, '0')}'),
-              mediumSpace,
-              Text(
-                'Session duration',
-                style: smallTextFont,
-              ),
-              smallSpace,
-              displayTime(model.showDurationDialog,
-                  '${model.currentDay.duration.hour.toString().padLeft(2, '0')} : ${model.currentDay.duration.minute.toString().padLeft(2, '0')}'),
-              Expanded(child: Text('')),
-              Row(
+        body: Stack(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: pageHorizontalMargin,
+                  vertical: pageVerticalMargin),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  model.dayIndex != 0
-                      ? backwardArrowButton(model.goToPrevDay)
-                      : Container(),
+                  largeSpace,
+                  Text(
+                    'Select working hours for',
+                    style: largeTextFont,
+                  ),
+                  Text(
+                    model.currentDay.title,
+                    style: largeTextFont.copyWith(color: primaryColorDark),
+                  ),
+                  mediumSpace,
+                  Text(
+                    'Select the start time, end time and duration of each session on ${model.currentDay.title}',
+                    style: mediumTextFont,
+                  ),
+                  largeSpace,
+                  Text(
+                    'Start time',
+                    style: smallTextFont,
+                  ),
+                  smallSpace,
+                  displayTime(model.showStartTimeDialog,
+                      '${model.currentDay.startTime.hour.toString().padLeft(2, '0')} : ${model.currentDay.startTime.minute.toString().padLeft(2, '0')}'),
+                  mediumSpace,
+                  Text('End time', style: smallTextFont),
+                  smallSpace,
+                  displayTime(model.showEndTimeDialog,
+                      '${model.currentDay.endTime.hour.toString().padLeft(2, '0')} : ${model.currentDay.endTime.minute.toString().padLeft(2, '0')}'),
+                  mediumSpace,
+                  Text(
+                    'Session duration',
+                    style: smallTextFont,
+                  ),
+                  smallSpace,
+                  displayTime(model.showDurationDialog,
+                      '${model.currentDay.duration.hour.toString().padLeft(2, '0')} : ${model.currentDay.duration.minute.toString().padLeft(2, '0')}'),
                   Expanded(child: Text('')),
-                  forwardArrowButton(model.goToNextDay)
+                  Row(
+                    children: [
+                      model.dayIndex != 0
+                          ? backwardArrowButton(model.goToPrevDay)
+                          : Container(),
+                      Expanded(child: Text('')),
+                      forwardArrowButton(model.goToNextDay)
+                    ],
+                  ),
+                  smallSpace
                 ],
               ),
-              smallSpace
-            ],
-          ),
+            ),
+            model.isBusy
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.black54.withOpacity(0.5),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 70,
+                            height: 60,
+                            child: LoadingIndicator(
+                                indicatorType: Indicator.lineScalePulseOut,
+                                color: Colors.white),
+                          ),
+                          mediumSpace,
+                          Text(
+                            'Setting up booking slots...',
+                            style: mediumTextFont.copyWith(color: Colors.white),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : smallSpace
+          ],
         ),
       ),
       viewModelBuilder: () => SetupViewModel(),

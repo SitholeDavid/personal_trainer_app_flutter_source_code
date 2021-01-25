@@ -1,48 +1,56 @@
-import 'package:flutter/cupertino.dart';
-
 class Client {
   String clientID;
+  List trainers;
   String name;
   String surname;
   String email;
-  Image picture;
-  List<double> weight;
+  String pictureUrl;
+  List weight;
   double height;
   String healthConditions;
   String phoneNo;
+  String lastSessionDate = 'No sessions yet';
 
   Client(
-      {this.clientID,
-      this.name,
-      this.surname,
-      this.email,
-      this.picture,
+      {this.clientID = '',
+      this.name = '',
+      this.surname = '',
+      this.email = '',
+      this.pictureUrl = '',
       this.weight,
-      this.healthConditions,
-      this.phoneNo});
+      this.healthConditions = '',
+      this.phoneNo = '',
+      this.height = 0,
+      this.trainers,
+      this.lastSessionDate = ''}) {
+    this.trainers = this.trainers ?? List<String>();
+    this.weight = this.weight ?? List<double>();
+  }
 
-  Client.fromMap(Map<String, dynamic> map) {
-    clientID = map['clientID'];
+  Client.fromMap(Map<String, dynamic> map, String uid) {
+    clientID = uid;
     name = map['name'];
     surname = map['surname'];
     email = map['email'];
-    picture = map['picture'];
-    weight = map['weight'];
+    pictureUrl = map['pictureUrl'];
+    height = map['height'];
+    trainers = List<dynamic>.from(map['trainers']);
+    weight = List<dynamic>.from(map['weight']);
     healthConditions = map['healthConditions'];
     phoneNo = map['phoneNo'];
+    lastSessionDate = map['lastSessionDate'] ?? 'No sessions yet';
   }
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map;
-    map['clientID'] = clientID;
-    map['name'] = name;
-    map['surname'] = surname;
-    map['email'] = email;
-    map['picture'] = picture;
-    map['weight'] = weight;
-    map['healthConditions'] = healthConditions;
-    map['phoneNo'] = phoneNo;
-
-    return map;
-  }
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'name': name,
+        'surname': surname,
+        'email': email,
+        'trainers': trainers.toSet().toList(),
+        'pictureUrl': pictureUrl,
+        'weight': weight.toList(),
+        'height': height,
+        'healthConditions': healthConditions,
+        'phoneNo': phoneNo,
+        'lastSessionDate': lastSessionDate
+      };
 }

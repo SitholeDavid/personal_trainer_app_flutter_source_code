@@ -13,8 +13,8 @@ class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
 
-final Color primaryColor = HexColor('#03a9f4');
-final Color primaryColorLight = HexColor('#67daff');
-final Color primaryColorDark = HexColor('#007ac1');
-final Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
-final Color textColor = Colors.black87;
+final Color primaryColor = HexColor('#1167b1');
+final Color primaryColorLight = HexColor('#2a9df4');
+final Color primaryColorDark = HexColor('#03254c');
+final Color backgroundColor = HexColor('#191E27');
+final Color textColor = Colors.white;

@@ -6,6 +6,7 @@ import 'package:personal_trainer_app/ui/constants/colors.dart';
 import 'package:personal_trainer_app/ui/constants/margins.dart';
 import 'package:personal_trainer_app/ui/constants/text_sizes.dart';
 import 'package:personal_trainer_app/ui/constants/ui_helpers.dart';
+import 'package:personal_trainer_app/ui/shared/custom_text_button.dart';
 import 'package:stacked/stacked.dart';
 
 class SignInView extends StatelessWidget {
@@ -92,30 +93,10 @@ class SignInView extends StatelessWidget {
                 ],
               ),
               largeSpace,
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async => await model.login(
-                          emailController.text, passwordController.text),
-                      child: Text(
-                        'Sign In',
-                        style: mediumTextFont.copyWith(color: Colors.white),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => primaryColorDark),
-                          padding: MaterialStateProperty.resolveWith((states) =>
-                              EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 10)),
-                          shape: MaterialStateProperty.resolveWith((states) =>
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  side: BorderSide(color: primaryColorDark)))),
-                    ),
-                  )
-                ],
-              ),
+              customTextButton(
+                  buttonText: 'Sign in',
+                  onTapCallback: () async => await model.login(
+                      emailController.text, passwordController.text)),
               Expanded(child: Text('')),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
