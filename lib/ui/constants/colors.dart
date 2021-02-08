@@ -16,5 +16,5 @@ class HexColor extends Color {
 final Color primaryColor = HexColor('#1167b1');
 final Color primaryColorLight = HexColor('#2a9df4');
 final Color primaryColorDark = HexColor('#03254c');
-final Color backgroundColor = HexColor('#191E27');
+final Color backgroundColor = HexColor('#F9F8F7');
 final Color textColor = Colors.white;

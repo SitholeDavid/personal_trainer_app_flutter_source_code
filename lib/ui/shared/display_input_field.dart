@@ -14,7 +14,7 @@ Widget displayInputField(String title, dynamic value, Function onTapCallback) {
           decoration: BoxDecoration(
               color: backgroundColor,
               border: Border(
-                  bottom: BorderSide(color: Colors.black12, width: 1.0))),
+                  bottom: BorderSide(color: Colors.black26, width: 1.0))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

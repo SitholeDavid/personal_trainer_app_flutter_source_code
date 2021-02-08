@@ -10,6 +10,7 @@ import 'package:personal_trainer_app/ui/constants/text_sizes.dart';
 import 'package:personal_trainer_app/ui/constants/ui_helpers.dart';
 import 'package:personal_trainer_app/ui/shared/custom_text_button.dart';
 import 'package:personal_trainer_app/ui/shared/display_input_field.dart';
+import 'package:personal_trainer_app/ui/widgets/loading_indicator.dart';
 import 'package:stacked/stacked.dart';
 
 class ClientView extends StatelessWidget {
@@ -21,78 +22,90 @@ class ClientView extends StatelessWidget {
     return ViewModelBuilder<ClientViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
           backgroundColor: backgroundColor,
-          body: Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: pageHorizontalMargin,
-                  vertical: pageVerticalMargin),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    mediumSpace,
-                    Row(
+          body: Stack(
+            children: [
+              Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: pageHorizontalMargin,
+                      vertical: pageVerticalMargin),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                            icon: Icon(Icons.arrow_back_ios),
-                            onPressed: model.navigateToPrevView),
-                        Text(
-                          model.viewTitle,
-                          style: largeTextFont.copyWith(
-                              fontSize: 22, color: primaryColorDark),
-                        ),
-                      ],
-                    ),
-                    mediumSpace,
-                    Text(
-                      model.viewSubTitle,
-                      style: mediumTextFont,
-                    ),
-                    largeSpace,
-                    displayProfilePicture(model.client.pictureUrl,
-                        model.localImage, model.updateProfilePicture),
-                    Flexible(
-                        child: ListView(
-                      children: [
-                        displayInputField(
-                            'Name', model.client.name, model.updateName),
-                        displayInputField('Surname', model.client.surname,
-                            model.updateSurname),
-                        displayInputField(
-                            'Email', model.client.email, model.updateEmail),
-                        displayInputField(
-                            'Weight', model.currentWeight, model.updateWeight),
-                        displayInputField(
-                            'Height', model.client.height, model.updateHeight),
-                        displayInputField(
-                            'Health conditions',
-                            model.client.healthConditions,
-                            model.updateHealthConditions),
-                        displayInputField('Phone number', model.client.phoneNo,
-                            model.updatePhoneNo),
                         mediumSpace,
-                        model.newClient
-                            ? Text('')
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(bottom: 20, right: 10),
-                                    child: IconButton(
-                                        icon: Icon(
-                                          FontAwesome5.trash_alt,
-                                          color: primaryColorDark,
-                                          size: 40,
-                                        ),
-                                        onPressed: model.deleteClient),
+                        Row(
+                          children: [
+                            IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: primaryColor,
+                                ),
+                                onPressed: model.navigateToPrevView),
+                            Text(model.viewTitle,
+                                style: largeTextFont.copyWith(
+                                  fontSize: 22,
+                                  color: primaryColor,
+                                )),
+                          ],
+                        ),
+                        mediumSpace,
+                        Text(
+                          model.viewSubTitle,
+                          style: mediumTextFont.copyWith(color: Colors.black87),
+                        ),
+                        largeSpace,
+                        displayProfilePicture(model.client.pictureUrl,
+                            model.localImage, model.updateProfilePicture),
+                        Flexible(
+                            child: ListView(
+                          children: [
+                            displayInputField(
+                                'Name', model.client.name, model.updateName),
+                            displayInputField('Surname', model.client.surname,
+                                model.updateSurname),
+                            displayInputField(
+                                'Email', model.client.email, model.updateEmail),
+                            displayInputField('Weight', model.currentWeight,
+                                model.updateWeight),
+                            displayInputField('Height', model.client.height,
+                                model.updateHeight),
+                            displayInputField(
+                                'Health conditions',
+                                model.client.healthConditions,
+                                model.updateHealthConditions),
+                            displayInputField('Phone number',
+                                model.client.phoneNo, model.updatePhoneNo),
+                            mediumSpace,
+                            model.newClient
+                                ? Text('')
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            bottom: 20, right: 10),
+                                        child: IconButton(
+                                            icon: Icon(
+                                              FontAwesome5.trash_alt,
+                                              color: primaryColor,
+                                              size: 40,
+                                            ),
+                                            onPressed: model.deleteClient),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                        customTextButton(
-                            buttonText: model.buttonTitle,
-                            onTapCallback: model.saveClient)
-                      ],
-                    ))
-                  ]))),
+                            customTextButton(
+                                buttonText: model.buttonTitle,
+                                onTapCallback: model.saveClient)
+                          ],
+                        ))
+                      ])),
+              model.isBusy
+                  ? loadingIndicatorLight(loadingText: model.loadingText)
+                  : SizedBox(
+                      height: 0,
+                    )
+            ],
+          )),
       viewModelBuilder: () => ClientViewModel(),
       onModelReady: (model) => model.initialise(existingClient),
     );
@@ -117,11 +130,13 @@ Widget displayProfilePicture(
       onPressed: onTapCallback,
       child: Container(
         alignment: Alignment.center,
-        child: profilePicUrl == ''
+        child: profilePicUrl.isEmpty && localImage == null
             ? chosenImage
-            : Image.network(
-                profilePicUrl,
-                height: imageHeight,
-              ),
+            : (localImage == null
+                ? Image.network(
+                    profilePicUrl,
+                    height: imageHeight,
+                  )
+                : Image.file(localImage, height: imageHeight)),
       ));
 }

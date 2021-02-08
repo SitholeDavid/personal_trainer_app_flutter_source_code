@@ -15,3 +15,7 @@ final Widget largeSpace = SizedBox(
 final Widget extraLargeSpace = SizedBox(
   height: 70,
 );
+
+final Widget emptySpace = SizedBox(
+  height: 0,
+);

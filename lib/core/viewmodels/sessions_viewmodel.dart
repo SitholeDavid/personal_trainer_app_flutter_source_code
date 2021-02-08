@@ -1,7 +1,10 @@
+import 'package:personal_trainer_app/core/models/purchase.dart';
 import 'package:personal_trainer_app/core/models/session.dart';
 import 'package:personal_trainer_app/core/models/trainer.dart';
 import 'package:personal_trainer_app/core/services/auth_service/auth_service.dart';
 import 'package:personal_trainer_app/core/services/auth_service/auth_service_interface.dart';
+import 'package:personal_trainer_app/core/services/cloud_messaging_service/cloud_messaging_service.dart';
+import 'package:personal_trainer_app/core/services/cloud_messaging_service/cloud_messaging_service_interface.dart';
 import 'package:personal_trainer_app/core/services/firestore_service/firestore_service.dart';
 import 'package:personal_trainer_app/core/services/firestore_service/firestore_service_interface.dart';
 import 'package:personal_trainer_app/core/utils.dart';
@@ -16,11 +19,19 @@ class SessionsViewModel extends BaseViewModel {
   final FirestoreService _firestoreService =
       locator<FirestoreServiceInterface>();
   final AuthService _authService = locator<AuthServiceInterface>();
+  final CloudMessagingService _messagingService =
+      locator<CloudMessagingServiceInterface>();
 
   List<Session> sessions;
   List<DateTime> days;
   String trainerID;
   DateTime selectedDay;
+  bool isUpdating = false;
+
+  void setIsUpdating(bool status) {
+    isUpdating = status;
+    notifyListeners();
+  }
 
   Future getSessions(String day) async {
     setBusy(true);
@@ -49,8 +60,15 @@ class SessionsViewModel extends BaseViewModel {
   }
 
   Future updateSession(Session session) async {
+    if (sessionHasPassed(session.startTime))
+      return _snackbarService.showSnackbar(
+          message: 'This session has already passed');
+
     var response = await _dialogService.showCustomDialog(
         variant: DialogType.updateBooking,
+        additionalButtonTitle: session.client == 'Reserved'
+            ? 'Make session available'
+            : 'Make session unavailable',
         customData: dialogCustomData(session.client));
 
     Trainer trainer = await _authService.getCurrentUser();
@@ -60,9 +78,22 @@ class SessionsViewModel extends BaseViewModel {
         response.responseData['selectedOption'] == null ? false : true;
 
     if (sessionUpdated) {
-      switch (response.responseData['selectedOption']) {
+      setIsUpdating(true);
+
+      String day = formatDay(session.startTime);
+      String time = formatTime(DateTime.parse(session.startTime));
+
+      cancelClientSession(
+          clientID: session.clientID,
+          clientToken: session.clientToken,
+          day: day,
+          time: time);
+
+      switch (response.responseData['selectedOption'].toString().trim()) {
         case 'Reserve session':
           session.client = response.responseData['clientID'];
+          session.clientToken = '';
+          session.clientID = '';
 
           bool success = await _firestoreService.updateSession(
               trainerID, selectedDay.weekday, session);
@@ -72,6 +103,9 @@ class SessionsViewModel extends BaseViewModel {
 
         case 'Cancel session':
           session.client = 'Available';
+          session.clientToken = '';
+          session.clientID = '';
+
           bool success = await _firestoreService.updateSession(
               trainerID, selectedDay.weekday, session);
 
@@ -80,13 +114,60 @@ class SessionsViewModel extends BaseViewModel {
 
         case 'Make session unavailable':
           session.client = 'Reserved';
+          session.clientToken = '';
+          session.clientID = '';
+
+          bool success = await _firestoreService.updateSession(
+              trainerID, selectedDay.weekday, session);
+
+          showResultSnackbar(success);
+          break;
+        case 'Make session available':
+          session.client = 'Available';
+          session.clientToken = '';
+          session.clientID = '';
+
           bool success = await _firestoreService.updateSession(
               trainerID, selectedDay.weekday, session);
 
           showResultSnackbar(success);
           break;
       }
+
+      setIsUpdating(false);
     }
+  }
+
+  bool sessionHasPassed(String time) {
+    DateTime startTime = DateTime.parse(time);
+    DateTime now = DateTime.now();
+    return startTime.isBefore(now);
+  }
+
+  void cancelClientSession(
+      {String clientToken,
+      String clientID,
+      String day,
+      String time,
+      bool reimburse = true}) async {
+    if (clientID == null || clientID.isEmpty || clientToken.isEmpty) return;
+
+    if (reimburse) {
+      Purchase clientPackage =
+          await _firestoreService.getClientPackage(trainerID, clientID);
+
+      if (clientPackage != null) {
+        clientPackage.sessionsCompleted = clientPackage.sessionsCompleted > 0
+            ? clientPackage.sessionsCompleted - 1
+            : 0;
+
+        await _firestoreService.updateClientPackage(
+            trainerID, clientID, clientPackage);
+      }
+    }
+
+    await _messagingService.trainerCancelBookingAlert(
+        clientToken: clientToken, day: day, time: time);
   }
 
   void showResultSnackbar(bool success) {

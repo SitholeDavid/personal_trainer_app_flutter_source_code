@@ -30,12 +30,15 @@ class WorkoutView extends StatelessWidget {
                     Row(
                       children: [
                         IconButton(
-                            icon: Icon(Icons.arrow_back_ios),
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: primaryColor,
+                            ),
                             onPressed: model.navigateToPrevView),
                         Text(
                           model.viewTitle,
                           style: largeTextFont.copyWith(
-                              fontSize: 22, color: primaryColorDark),
+                              fontSize: 22, color: primaryColor),
                         ),
                       ],
                     ),

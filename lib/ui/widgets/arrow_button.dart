@@ -4,7 +4,7 @@ import 'package:personal_trainer_app/ui/constants/colors.dart';
 Widget forwardArrowButton(Function onTapCallback) {
   return Container(
     decoration: BoxDecoration(
-        color: primaryColorDark, borderRadius: BorderRadius.circular(5)),
+        color: primaryColor, borderRadius: BorderRadius.circular(5)),
     padding: EdgeInsets.all(6),
     child: IconButton(
         icon: Icon(
@@ -19,7 +19,7 @@ Widget forwardArrowButton(Function onTapCallback) {
 Widget backwardArrowButton(Function onTapCallback) {
   return Container(
     decoration: BoxDecoration(
-        color: primaryColorDark, borderRadius: BorderRadius.circular(5)),
+        color: primaryColor, borderRadius: BorderRadius.circular(5)),
     padding: EdgeInsets.all(6),
     child: IconButton(
         icon: Icon(

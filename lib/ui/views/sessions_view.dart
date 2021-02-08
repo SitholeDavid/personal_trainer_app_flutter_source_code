@@ -7,6 +7,7 @@ import 'package:personal_trainer_app/ui/constants/colors.dart';
 import 'package:personal_trainer_app/ui/constants/text_sizes.dart';
 import 'package:personal_trainer_app/ui/constants/ui_helpers.dart';
 import 'package:personal_trainer_app/ui/shared/background_gradient.dart';
+import 'package:personal_trainer_app/ui/widgets/loading_indicator.dart';
 import 'package:stacked/stacked.dart';
 
 class SessionsView extends StatelessWidget {
@@ -15,28 +16,7 @@ class SessionsView extends StatelessWidget {
     return ViewModelBuilder<SessionsViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         body: model.isBusy
-            ? Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.black54.withOpacity(0.5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 70,
-                      height: 60,
-                      child: LoadingIndicator(
-                          indicatorType: Indicator.lineScalePulseOut,
-                          color: Colors.white),
-                    ),
-                    mediumSpace,
-                    Text(
-                      'Loading booking slots...',
-                      style: mediumTextFont.copyWith(color: Colors.white),
-                    )
-                  ],
-                ),
-              )
+            ? loadingIndicatorLight(loadingText: 'Loading sessions')
             : Stack(
                 children: [
                   Column(
@@ -45,10 +25,13 @@ class SessionsView extends StatelessWidget {
                       topDashboard(
                           model.days, model.selectedDay, model.changeDay),
                       model.sessions.length == 0
-                          ? Center(
-                              child: Text(
-                                'No booking slots for this day',
-                                style: mediumTextFont,
+                          ? Expanded(
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'No booking slots for this day',
+                                  style: mediumTextFont,
+                                ),
                               ),
                             )
                           : Flexible(
@@ -61,6 +44,9 @@ class SessionsView extends StatelessWidget {
                             )
                     ],
                   ),
+                  model.isUpdating
+                      ? loadingIndicator(loadingText: 'Updating booking..')
+                      : emptySpace
                 ],
               ),
       ),
@@ -126,6 +112,15 @@ Widget dateTile(DateTime date, bool currentDay, Function onTapCallback) {
 }
 
 Widget sessionTile(Session session, Function onTapCallback) {
+  Color tileColor;
+
+  if (session.client == 'Reserved')
+    tileColor = Colors.blueGrey;
+  else if (session.client == 'Available')
+    tileColor = primaryColorDark;
+  else
+    tileColor = Colors.greenAccent;
+
   return GestureDetector(
     onTap: () => onTapCallback(session),
     child: Container(
@@ -133,7 +128,7 @@ Widget sessionTile(Session session, Function onTapCallback) {
       width: double.infinity,
       padding: EdgeInsets.all(15),
       margin: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 0),
-      decoration: BoxDecoration(color: backgroundColor, boxShadow: [
+      decoration: BoxDecoration(color: tileColor, boxShadow: [
         BoxShadow(
           color: Colors.black12,
           blurRadius: 2.0,
@@ -150,7 +145,7 @@ Widget sessionTile(Session session, Function onTapCallback) {
                     right: BorderSide(width: 0.5, color: Colors.black45))),
             child: Text(
               '${DateTime.parse(session.startTime).hour.toString().padLeft(2, '0')} : ${DateTime.parse(session.startTime).minute.toString().padLeft(2, '0')}',
-              style: mediumTextFont.copyWith(color: Colors.black54),
+              style: mediumTextFont.copyWith(color: Colors.white),
             ),
           ),
           Expanded(
@@ -158,7 +153,7 @@ Widget sessionTile(Session session, Function onTapCallback) {
               padding: EdgeInsets.only(left: 15),
               child: Text(
                 session.client,
-                style: mediumTextFont.copyWith(color: Colors.black),
+                style: mediumTextFont.copyWith(color: Colors.white),
               ),
             ),
           )

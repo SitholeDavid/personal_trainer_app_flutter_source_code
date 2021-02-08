@@ -113,7 +113,7 @@ class _UpdateTimeSlotDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<UpdateBookingViewModel>.reactive(
-      onModelReady: (model) => model.initialise(),
+      onModelReady: (model) => model.initialise(request.additionalButtonTitle),
       viewModelBuilder: () => UpdateBookingViewModel(),
       builder: (context, model, builder) => Container(
         margin: EdgeInsets.symmetric(
@@ -285,7 +285,7 @@ class _EditInputDialog extends StatelessWidget {
               alignment: Alignment.topLeft,
               icon: Icon(
                 Entypo.cross,
-                color: Colors.black87,
+                color: primaryColorLight,
               ),
               onPressed: null,
             ),
@@ -294,11 +294,13 @@ class _EditInputDialog extends StatelessWidget {
             Text(
               request.title,
               style:
-                  smallTextFont.copyWith(color: Colors.black87, fontSize: 14),
+                  smallTextFont.copyWith(color: Colors.black54, fontSize: 14),
             ),
             TextFormField(
               keyboardType:
                   request.customData['inputType'] ?? TextInputType.text,
+              style:
+                  smallTextFont.copyWith(color: Colors.black87, fontSize: 15),
               controller: inputController,
               autofocus: true,
             ),

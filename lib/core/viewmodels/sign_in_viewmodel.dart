@@ -16,7 +16,8 @@ class SignInViewModel extends BaseViewModel {
 
     if (success) {
       //navigate to dashboard
-      _navService.navigateTo(DashboardViewRoute);
+
+      await _navService.navigateTo(DashboardViewRoute);
     } else {
       //show failure snackbar
       _snackbarService.showSnackbar(

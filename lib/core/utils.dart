@@ -117,7 +117,11 @@ List<Session> createSessions(
 
   while (nextSlot.isBefore(endSlot)) {
     var nextSession = Session(
-        client: 'Available', sessionID: '', startTime: nextSlot.toString());
+        client: 'Available',
+        sessionID: '',
+        clientID: '',
+        clientToken: '',
+        startTime: nextSlot.toString());
 
     sessions.add(nextSession);
     nextSlot =
@@ -138,4 +142,22 @@ bool timeComesBefore(DateTime dateA, DateTime dateB) {
 
 bool timesAreEqual(DateTime timeA, DateTime timeB) {
   return (timeA.hour == timeB.hour && timeA.minute == timeB.minute);
+}
+
+String formatTime(DateTime time) {
+  String unformattedTime = time.toString().split(' ').last;
+  String hours = unformattedTime.split(':').first.padLeft(2, '0');
+  String minutes = unformattedTime.split(':')[1].padLeft(2, '0');
+
+  String formattedTime = '$hours : $minutes';
+
+  return formattedTime;
+}
+
+String formatDay(String unformattedDay) {
+  String day = unformattedDay.split(' ').first.split('-').elementAt(2);
+  String intMonth = unformattedDay.split(' ').first.split('-').elementAt(1);
+  String month = getMonth(int.parse(intMonth));
+  String formattedDay = day + ' ' + month.substring(0, 3);
+  return formattedDay;
 }

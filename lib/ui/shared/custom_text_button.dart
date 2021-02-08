@@ -13,13 +13,13 @@ Widget customTextButton({String buttonText, Function onTapCallback}) {
       ),
       style: ButtonStyle(
           backgroundColor:
-              MaterialStateColor.resolveWith((states) => primaryColorDark),
+              MaterialStateColor.resolveWith((states) => primaryColor),
           padding: MaterialStateProperty.resolveWith(
               (states) => EdgeInsets.symmetric(vertical: 12, horizontal: 10)),
           shape: MaterialStateProperty.resolveWith((states) =>
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
-                  side: BorderSide(color: primaryColorDark)))),
+                  side: BorderSide(color: primaryColor)))),
     ))
   ]);
 }

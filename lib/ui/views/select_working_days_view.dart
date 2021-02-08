@@ -21,12 +21,12 @@ class SelectWorkingDaysView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    extraLargeSpace,
+                    largeSpace,
                     Text(
                       'Working days',
-                      style: largeTextFont,
+                      style: largeTextFont.copyWith(color: primaryColor),
                     ),
-                    mediumSpace,
+                    largeSpace,
                     Text(
                       'Select your working days below. Your clients will be able to schedule sessions on these days.',
                       style: mediumTextFont,

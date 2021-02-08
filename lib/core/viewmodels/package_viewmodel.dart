@@ -26,6 +26,7 @@ class PackageViewModel extends BaseViewModel {
   var viewTitle;
   var viewSubTitle;
   var buttonTitle;
+  String loadingText;
   bool newPackage = true;
 
   void initialise(Package existingPackage) {
@@ -103,6 +104,9 @@ class PackageViewModel extends BaseViewModel {
     else if (package.description.isEmpty)
       showEmptyFieldSnackbar('Description');
     else {
+      loadingText = 'Saving package..';
+      setBusy(true);
+
       Trainer trainer = await _authService.getCurrentUser();
       String uid = trainer?.id;
 
@@ -119,6 +123,7 @@ class PackageViewModel extends BaseViewModel {
                 : 'Could not update package',
             duration: Duration(seconds: 2));
 
+        setBusy(false);
         return;
       }
 
@@ -142,10 +147,15 @@ class PackageViewModel extends BaseViewModel {
                 : 'Could not update package',
             duration: Duration(seconds: 2));
       }
+
+      setBusy(false);
     }
   }
 
   void deletePackage() async {
+    loadingText = 'Deleting package..';
+    setBusy(true);
+
     Trainer trainer = await _authService.getCurrentUser();
     String uid = trainer?.id;
 
@@ -156,6 +166,7 @@ class PackageViewModel extends BaseViewModel {
       _snackbarService.showSnackbar(
           message: 'Could not delete package', duration: Duration(seconds: 2));
 
+      setBusy(false);
       return;
     }
 
@@ -171,6 +182,8 @@ class PackageViewModel extends BaseViewModel {
       _snackbarService.showSnackbar(
           message: 'Could not delete package', duration: Duration(seconds: 2));
     }
+
+    setBusy(false);
   }
 
   void navigateToPrevView() {

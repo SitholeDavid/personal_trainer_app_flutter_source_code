@@ -7,6 +7,7 @@ import 'package:personal_trainer_app/ui/constants/margins.dart';
 import 'package:personal_trainer_app/ui/constants/text_sizes.dart';
 import 'package:personal_trainer_app/ui/constants/ui_helpers.dart';
 import 'package:personal_trainer_app/ui/widgets/arrow_button.dart';
+import 'package:personal_trainer_app/ui/widgets/loading_indicator.dart';
 import 'package:stacked/stacked.dart';
 
 class SetupView extends StatelessWidget {
@@ -30,7 +31,7 @@ class SetupView extends StatelessWidget {
                   largeSpace,
                   Text(
                     'Select working hours for',
-                    style: largeTextFont,
+                    style: largeTextFont.copyWith(color: primaryColor),
                   ),
                   Text(
                     model.currentDay.title,
@@ -77,31 +78,8 @@ class SetupView extends StatelessWidget {
               ),
             ),
             model.isBusy
-                ? Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.black54.withOpacity(0.5),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 60,
-                            child: LoadingIndicator(
-                                indicatorType: Indicator.lineScalePulseOut,
-                                color: Colors.white),
-                          ),
-                          mediumSpace,
-                          Text(
-                            'Setting up booking slots...',
-                            style: mediumTextFont.copyWith(color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                : smallSpace
+                ? loadingIndicator(loadingText: 'Setting up booking slots')
+                : emptySpace
           ],
         ),
       ),

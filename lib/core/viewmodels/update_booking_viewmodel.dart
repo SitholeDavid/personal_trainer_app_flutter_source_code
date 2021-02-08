@@ -4,13 +4,13 @@ class UpdateBookingViewModel extends BaseViewModel {
   final updateOptions = <String>[
     'Reserve session',
     'Cancel session',
-    'Make session unavailable'
   ];
 
   bool disableKeyboard;
   String selectedOption;
 
-  void initialise() {
+  void initialise(String additionalOption) {
+    updateOptions.add(additionalOption);
     selectedOption = updateOptions[0];
     disableKeyboard = false;
     notifyListeners();

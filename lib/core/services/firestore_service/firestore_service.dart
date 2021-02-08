@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:personal_trainer_app/core/constants/working_days.dart';
 import 'package:personal_trainer_app/core/models/client.dart';
+import 'package:personal_trainer_app/core/models/purchase.dart';
 import 'package:personal_trainer_app/core/models/session.dart';
 import 'package:personal_trainer_app/core/models/package.dart';
 import 'package:personal_trainer_app/core/models/trainer.dart';
@@ -17,6 +16,8 @@ class FirestoreService extends FirestoreServiceInterface {
   CollectionReference _packagesRef = Firestore.instance.collection('packages');
   CollectionReference _clientsRef = Firestore.instance.collection('clients');
   CollectionReference _sessionsRef = Firestore.instance.collection('sessions');
+  CollectionReference _purchasesRef =
+      Firestore.instance.collection('purchases');
 
   HttpsCallable createClientProfile =
       CloudFunctions.instance.getHttpsCallable(functionName: 'createClient');
@@ -43,19 +44,20 @@ class FirestoreService extends FirestoreServiceInterface {
   }
 
   @override
-  Future<bool> createClient(String trainerID, Client client) async {
+  Future<String> createClient(String trainerID, Client client) async {
     client.trainers.add(trainerID);
 
     try {
       var result = await getClient(trainerID, client.clientID);
       bool clientExists = result != null;
+      String uid = '';
 
       if (!clientExists) {
         var result = await createClientProfile
             .call({"email": client.email, "password": 'temp123!'});
-        String uid = result.data as String;
+        uid = result.data as String;
 
-        if (uid == null) return false;
+        if (uid == null) return '';
         client.clientID = uid;
 
         await _clientsRef.document(uid).setData(client.toJson());
@@ -63,9 +65,9 @@ class FirestoreService extends FirestoreServiceInterface {
         await updateClient(trainerID, client);
       }
 
-      return true;
+      return uid;
     } catch (e) {
-      return false;
+      return '';
     }
   }
 
@@ -303,6 +305,38 @@ class FirestoreService extends FirestoreServiceInterface {
       for (var snapshot in documentSnapshots.documents) {
         await snapshot.reference.delete();
       }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<Purchase> getClientPackage(String trainerID, String clientID) async {
+    try {
+      var jsonData = await _purchasesRef
+          .document(trainerID)
+          .collection('client-purchases')
+          .document(clientID)
+          .get();
+
+      Purchase purchase = Purchase.fromMap(jsonData.data, jsonData.documentID);
+      return purchase;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<bool> updateClientPackage(
+      String trainerID, String clientID, Purchase purchase) async {
+    try {
+      await _purchasesRef
+          .document(trainerID)
+          .collection('client-purchases')
+          .document(clientID)
+          .updateData(purchase.toJson());
 
       return true;
     } catch (e) {

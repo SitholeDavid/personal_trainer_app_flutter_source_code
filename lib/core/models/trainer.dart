@@ -6,10 +6,12 @@ class Trainer {
   String name;
   String bankingDetails;
   String phoneNumber;
+  String myFCMToken;
 
   Trainer(
       {@required this.id,
       @required this.email,
+      this.myFCMToken = '',
       this.name = '',
       this.bankingDetails = '',
       this.phoneNumber = ''});
@@ -19,6 +21,7 @@ class Trainer {
     email = map['email'];
     name = map['name'];
     bankingDetails = map['bankingDetails'];
+    myFCMToken = map['myFCMToken'] ?? '';
     phoneNumber = map['phoneNumber'];
   }
 
@@ -26,6 +29,7 @@ class Trainer {
         'email': email,
         'name': name,
         'bankingDetails': bankingDetails ?? '',
+        'myFCMToken': myFCMToken ?? '',
         'phoneNumber': phoneNumber ?? ''
       };
 
@@ -35,6 +39,7 @@ class Trainer {
     map['email'] = email;
     map['name'] = name;
     map['bankingDetails'] = bankingDetails;
+    map['myFCMToken'] = myFCMToken;
     map['phoneNumber'] = phoneNumber;
 
     return map;

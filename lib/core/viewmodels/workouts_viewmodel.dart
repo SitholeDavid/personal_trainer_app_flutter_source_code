@@ -12,19 +12,23 @@ class WorkoutsViewModel extends BaseViewModel {
   var workouts = List<Workout>();
 
   Future getWorkouts() async {
+    setBusy(true);
     workouts = await _databaseService.getWorkouts();
-    notifyListeners();
+    setBusy(false);
   }
 
-  void navigateToWorkoutDetail(Workout selectedWorkout) {
-    _navigationService.navigateTo(WorkoutViewRoute, arguments: selectedWorkout);
+  void navigateToWorkoutDetail(Workout selectedWorkout) async {
+    await _navigationService.navigateTo(WorkoutViewRoute,
+        arguments: selectedWorkout);
+    await getWorkouts();
   }
 
   void navigateBackToPrevView() {
     _navigationService.popRepeated(1);
   }
 
-  void navigateToCreateWorkout() {
-    _navigationService.navigateTo(WorkoutViewRoute);
+  void navigateToCreateWorkout() async {
+    await _navigationService.navigateTo(WorkoutViewRoute);
+    await getWorkouts();
   }
 }

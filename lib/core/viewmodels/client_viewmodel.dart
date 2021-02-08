@@ -3,6 +3,8 @@ import 'package:personal_trainer_app/core/models/client.dart';
 import 'package:personal_trainer_app/core/models/trainer.dart';
 import 'package:personal_trainer_app/core/services/auth_service/auth_service.dart';
 import 'package:personal_trainer_app/core/services/auth_service/auth_service_interface.dart';
+import 'package:personal_trainer_app/core/services/cloud_storage_service/cloud_storage_service.dart';
+import 'package:personal_trainer_app/core/services/cloud_storage_service/cloud_storage_service_interface.dart';
 import 'package:personal_trainer_app/core/services/firestore_service/firestore_service.dart';
 import 'package:personal_trainer_app/core/services/firestore_service/firestore_service_interface.dart';
 import 'package:personal_trainer_app/core/services/image_selection_service.dart/image_selection_service.dart';
@@ -24,12 +26,16 @@ class ClientViewModel extends BaseViewModel {
   final FirestoreService _firestoreService =
       locator<FirestoreServiceInterface>();
 
+  final CloudStorageService _cloudStorageService =
+      locator<CloudStorageServiceInterface>();
+
   var client = Client();
   var viewTitle;
   var viewSubTitle;
   var buttonTitle;
   var currentWeight;
   var localImage;
+  String loadingText;
   bool newClient = true;
 
   void initialise(Client existingClient) {
@@ -144,14 +150,34 @@ class ClientViewModel extends BaseViewModel {
   }
 
   Future saveClient() async {
+    loadingText = 'Saving client..';
+    setBusy(true);
+
     client.weight.add(currentWeight);
     try {
       Trainer trainer = await _authService.getCurrentUser();
       String uid = trainer?.id;
 
-      bool success = await (newClient
-          ? _firestoreService.createClient(uid, client)
-          : _firestoreService.updateClient(uid, client));
+      bool success;
+
+      if (newClient) {
+        String clientID = await _firestoreService.createClient(uid, client);
+
+        if (clientID.isEmpty)
+          throw Error();
+        else
+          success = true;
+
+        String imgUrl = await uploadImage(clientID);
+
+        client.clientID = clientID;
+        client.pictureUrl = imgUrl;
+        await _firestoreService.updateClient(uid, client);
+      } else {
+        String imgUrl = await uploadImage(client.clientID);
+        client.pictureUrl = imgUrl;
+        success = await _firestoreService.updateClient(uid, client);
+      }
 
       if (!success) throw Error();
 
@@ -165,9 +191,14 @@ class ClientViewModel extends BaseViewModel {
               ? 'Client could not be created'
               : 'Client could not be updated');
     }
+
+    setBusy(false);
   }
 
   Future deleteClient() async {
+    loadingText = 'Deleting client..';
+    setBusy(true);
+
     try {
       Trainer trainer = await _authService.getCurrentUser();
       String uid = trainer?.id;
@@ -187,5 +218,18 @@ class ClientViewModel extends BaseViewModel {
           message: 'Client could not be deleted',
           duration: Duration(seconds: 2));
     }
+
+    setBusy(false);
+  }
+
+  Future<String> uploadImage(String clientID) async {
+    if (localImage == null) return '';
+
+    String imgExtension = localImage.path.split('.').last;
+    String imagePath = clientID + '.' + imgExtension;
+    String imgDownloadUrl =
+        await _cloudStorageService.uploadClientPicture(localImage, imagePath);
+
+    return imgDownloadUrl;
   }
 }

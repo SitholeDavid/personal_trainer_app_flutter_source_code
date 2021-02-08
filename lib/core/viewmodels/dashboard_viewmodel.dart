@@ -1,4 +1,3 @@
-import 'package:personal_trainer_app/core/constants/working_days.dart';
 import 'package:personal_trainer_app/core/models/session.dart';
 import 'package:personal_trainer_app/core/models/trainer.dart';
 import 'package:personal_trainer_app/core/services/auth_service/auth_service.dart';
@@ -43,8 +42,12 @@ class DashboardViewModel extends BaseViewModel {
       }
 
       for (var i = 0; i < 3 - sessions.length; i++) {
-        nextThreeSessions
-            .add(Session(sessionID: 'null', startTime: '-', client: '-'));
+        nextThreeSessions.add(Session(
+            sessionID: 'null',
+            startTime: '-',
+            clientID: '',
+            client: '-',
+            clientToken: ''));
       }
     } else {
       nextThreeSessions = sessions.sublist(0, 3);

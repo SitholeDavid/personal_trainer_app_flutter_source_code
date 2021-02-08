@@ -18,23 +18,25 @@ class ClientsViewModel extends BaseViewModel {
   var clients = List<Client>();
 
   Future getClients() async {
+    setBusy(true);
     Trainer trainer = await _authService.getCurrentUser();
     String uid = trainer?.id;
     clients = await _firestoreService.getClients(uid);
-    locator<SnackbarService>()
-        .showSnackbar(message: clients[0].name, duration: Duration(seconds: 5));
-    notifyListeners();
+    setBusy(false);
   }
 
   void navigateBackToPrevView() {
-    _navigationService.popRepeated(1);
+    _navigationService.back();
   }
 
-  void navigateToCreateClient() {
-    _navigationService.navigateTo(ClientViewRoute);
+  void navigateToCreateClient() async {
+    await _navigationService.navigateTo(ClientViewRoute);
+    await getClients();
   }
 
-  void navigateToClientDetail(Client selectedClient) {
-    _navigationService.navigateTo(ClientViewRoute, arguments: selectedClient);
+  void navigateToClientDetail(Client selectedClient) async {
+    await _navigationService.navigateTo(ClientViewRoute,
+        arguments: selectedClient);
+    await getClients();
   }
 }
